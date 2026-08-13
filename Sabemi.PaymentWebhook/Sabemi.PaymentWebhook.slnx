@@ -1,3 +1,7 @@
 <Solution>
   <Project Path="src/Sabemi.PaymentWebhook.Api/Sabemi.PaymentWebhook.Api.csproj" Id="cbc3e258-bb3f-455f-b8e5-785653ed94cb" />
+  <Project Path="src/Sabemi.PaymentWebhook.Application/Sabemi.PaymentWebhook.Application.csproj" Id="4423d4b6-73e5-4502-8154-5d16a68f706b" />
+  <Project Path="src/Sabemi.PaymentWebhook.Domain/Sabemi.PaymentWebhook.Domain.csproj" Id="9f2dae03-2698-4093-a3ef-d24127869838" />
+  <Project Path="src/Sabemi.PaymentWebhook.Infrastructure/Sabemi.PaymentWebhook.Infrastructure.csproj" Id="3bddac98-748d-483c-aefd-55097a6cb6e5" />
+  <Project Path="tests/Sabemi.PaymentWebhook.Tests/Sabemi.PaymentWebhook.Tests.csproj" Id="84d434f9-c2c3-46a0-8032-034ffb455fa4" />
 </Solution>

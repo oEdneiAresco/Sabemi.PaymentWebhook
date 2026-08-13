@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Sabemi.PaymentWebhook.Application\Sabemi.PaymentWebhook.Application.csproj" />
+    <ProjectReference Include="..\Sabemi.PaymentWebhook.Domain\Sabemi.PaymentWebhook.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
