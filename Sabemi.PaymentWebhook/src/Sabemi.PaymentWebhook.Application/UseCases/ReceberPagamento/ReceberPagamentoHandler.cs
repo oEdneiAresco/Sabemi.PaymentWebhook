@@ -1,19 +1,22 @@
 ﻿using MediatR;
+using Sabemi.PaymentWebhook.Application.Interfaces;
 using Sabemi.PaymentWebhook.Domain.Entities;
 using Sabemi.PaymentWebhook.Domain.Enums;
-using Sabemi.PaymentWebhook.Application.Interfaces;
 
 namespace Sabemi.PaymentWebhook.Application.UseCases.ReceberPagamento;
 
 public sealed class ReceberPagamentoHandler
     : IRequestHandler<ReceberPagamentoCommand, Pagamento>
 {
-    private readonly IPagamentoRepository _pagamentoRepository;
+    private readonly IPagamentoEventoRepository _pagamentoEventoRepository;
+    private readonly IProcessamentoPagamentoQueue _queue;
 
     public ReceberPagamentoHandler(
-        IPagamentoRepository pagamentoRepository)
+        IPagamentoEventoRepository pagamentoEventoRepository,
+        IProcessamentoPagamentoQueue queue)
     {
-        _pagamentoRepository = pagamentoRepository;
+        _pagamentoEventoRepository = pagamentoEventoRepository;
+        _queue = queue;
     }
 
     public async Task<Pagamento> Handle(
@@ -31,30 +34,35 @@ public sealed class ReceberPagamentoHandler
         }
 
         var dataPagamento = command.DataPagamento
-            ?? throw new ArgumentException("Data de pagamento é obrigatória.");
+            ?? throw new ArgumentException(
+                "Data de pagamento é obrigatória.");
 
-        var pagamentoExistente =
-            await _pagamentoRepository.ObterPorIdTransacaoAsync(
+        var eventoId =
+            await _pagamentoEventoRepository.AdicionarAsync(
                 command.IdTransacao,
+                command.Payload,
+                DateTime.UtcNow,
+                false,
+                null,
                 cancellationToken);
 
-        if (pagamentoExistente is not null)
-        {
-            return pagamentoExistente;
-        }
+        var processamentoCommand = new ProcessarPagamentoCommand(
+            eventoId,
+            command.IdTransacao,
+            command.IdContrato,
+            command.Valor,
+            dataPagamento,
+            command.Status);
 
-        var pagamento = Pagamento.Create(
+        await _queue.EnfileirarAsync(
+            processamentoCommand,
+            cancellationToken);
+
+        return Pagamento.Create(
             command.IdTransacao,
             command.IdContrato,
             command.Valor,
             dataPagamento,
             status);
-
-        await _pagamentoRepository.AdicionarAsync(
-            pagamento,
-            cancellationToken);
-
-        return pagamento;
     }
-
 }

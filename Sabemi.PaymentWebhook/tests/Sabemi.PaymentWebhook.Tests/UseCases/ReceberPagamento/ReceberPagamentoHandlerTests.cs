@@ -17,7 +17,8 @@ public class ReceberPagamentoHandlerTests
             "CTR-001",
             150.50m,
             new DateTime(2026, 8, 14),
-            "Sucesso");
+            "Sucesso", 
+            "{}");
 
         var services = new ServiceCollection();
 
@@ -48,7 +49,8 @@ public class ReceberPagamentoHandlerTests
             "CTR-001",
             150.50m,
             new DateTime(2026, 8, 14),
-            "StatusInexistente");
+            "StatusInexistente",
+            "{}");
 
         var services = new ServiceCollection();
 

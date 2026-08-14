@@ -36,3 +36,16 @@ Content-Type: application/json
   "data_pagamento": "2026-08-14T10:30:00",
   "status": "Sucesso"
 }
+
+###
+
+POST {{Sabemi.PaymentWebhook.Api_HostAddress}}/webhooks/pagamento
+Content-Type: application/json
+
+{
+  "id_transacao": "TRX-002-TESTE",
+  "id_contrato": "CTR-001",
+  "valor": 150.75,
+  "data_pagamento": "2026-08-14T10:30:00",
+  "status": "Sucesso"
+}

@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Sabemi.PaymentWebhook.Application.Interfaces;
 using Sabemi.PaymentWebhook.Infrastructure.Persistence;
 using Sabemi.PaymentWebhook.Infrastructure.Persistence.Repositories;
+using Sabemi.PaymentWebhook.Infrastructure.Processing;
 
 namespace Sabemi.PaymentWebhook.Infrastructure;
 
@@ -16,6 +17,10 @@ public static class DependencyInjection
             options.UseSqlServer(connectionString));
 
         services.AddScoped<IPagamentoRepository, PagamentoRepository>();
+
+        services.AddScoped<IPagamentoEventoRepository, PagamentoEventoRepository>();
+
+        services.AddSingleton<IProcessamentoPagamentoQueue, ProcessamentoPagamentoQueue>();
 
         return services;
     }

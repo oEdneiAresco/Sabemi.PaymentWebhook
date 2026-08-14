@@ -8,4 +8,5 @@ public sealed record ReceberPagamentoCommand(
     string IdContrato,
     decimal Valor,
     DateTime? DataPagamento,
-    string Status) : IRequest<Pagamento>;
+    string Status,
+    string Payload) : IRequest<Pagamento>;
