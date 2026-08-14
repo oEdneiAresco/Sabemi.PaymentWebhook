@@ -6,25 +6,46 @@ function App() {
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
 
-  useEffect(() => {
-    async function carregarPagamentos() {
-      try {
-        const dados = await buscarPagamentos();
-        setPagamentos(dados);
-      } catch (error) {
-        setErro(error.message);
-      } finally {
-        setCarregando(false);
-      }
-    }
+  const [idContrato, setIdContrato] = useState("");
+  const [status, setStatus] = useState("");
 
+  async function carregarPagamentos(filtros = {}) {
+    try {
+      setCarregando(true);
+      setErro(null);
+
+      const dados = await buscarPagamentos(filtros);
+
+      setPagamentos(dados);
+    } catch (error) {
+      setErro(error.message);
+    } finally {
+      setCarregando(false);
+    }
+  }
+
+  useEffect(() => {
     carregarPagamentos();
   }, []);
+
+  function filtrar() {
+    carregarPagamentos({
+      status,
+      idContrato
+    });
+  }
+
+  function limparFiltros() {
+    setStatus("");
+    setIdContrato("");
+
+    carregarPagamentos();
+  }
 
   function formatarValor(valor) {
     return valor.toLocaleString("pt-BR", {
       style: "currency",
-      currency: "BRL",
+      currency: "BRL"
     });
   }
 
@@ -42,6 +63,32 @@ function App() {
       <main>
         <section>
           <h2>Pagamentos</h2>
+
+          <div>
+            <input
+              type="text"
+              placeholder="ID do contrato"
+              value={idContrato}
+              onChange={(event) => setIdContrato(event.target.value)}
+            />
+
+            <select
+              value={status}
+              onChange={(event) => setStatus(event.target.value)}
+            >
+              <option value="">Todos os status</option>
+              <option value="Sucesso">Sucesso</option>
+              <option value="Falha">Falha</option>
+            </select>
+
+            <button onClick={filtrar}>
+              Filtrar
+            </button>
+
+            <button onClick={limparFiltros}>
+              Limpar
+            </button>
+          </div>
 
           {carregando && <p>Carregando pagamentos...</p>}
 
