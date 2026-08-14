@@ -1,8 +1,9 @@
-﻿using Sabemi.PaymentWebhook.Application.UseCases.ReceberPagamento;
-using Sabemi.PaymentWebhook.Domain.Enums;
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Sabemi.PaymentWebhook.Application;
+using Sabemi.PaymentWebhook.Application.Interfaces;
+using Sabemi.PaymentWebhook.Application.UseCases.ReceberPagamento;
+using Sabemi.PaymentWebhook.Domain.Enums;
 
 namespace Sabemi.PaymentWebhook.Tests.UseCases.ReceberPagamento;
 
@@ -17,13 +18,10 @@ public class ReceberPagamentoHandlerTests
             "CTR-001",
             150.50m,
             new DateTime(2026, 8, 14),
-            "Sucesso", 
+            "Sucesso",
             "{}");
 
-        var services = new ServiceCollection();
-
-        services.AddLogging();
-        services.AddApplication();
+        var services = CriarServices();
 
         var serviceProvider = services.BuildServiceProvider();
 
@@ -52,10 +50,7 @@ public class ReceberPagamentoHandlerTests
             "StatusInexistente",
             "{}");
 
-        var services = new ServiceCollection();
-
-        services.AddLogging();
-        services.AddApplication();
+        var services = CriarServices();
 
         var serviceProvider = services.BuildServiceProvider();
 
@@ -64,5 +59,65 @@ public class ReceberPagamentoHandlerTests
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentException>(
             async () => await mediator.Send(command));
+    }
+
+    private static ServiceCollection CriarServices()
+    {
+        var services = new ServiceCollection();
+
+        services.AddLogging();
+        services.AddApplication();
+
+        services.AddSingleton<
+            IPagamentoEventoRepository,
+            FakePagamentoEventoRepository>();
+
+        services.AddSingleton<
+            IProcessamentoPagamentoQueue,
+            FakeProcessamentoPagamentoQueue>();
+
+        return services;
+    }
+
+    private sealed class FakePagamentoEventoRepository
+        : IPagamentoEventoRepository
+    {
+        public Task<(Guid Id, bool Novo)> AdicionarAsync(
+            string idTransacao,
+            string payload,
+            DateTime recebidoEm,
+            bool processado,
+            string? erro,
+            CancellationToken cancellationToken)
+        {
+            return Task.FromResult(
+                (Guid.NewGuid(), true));
+        }
+
+        public Task MarcarComoProcessadoAsync(
+            Guid id,
+            string? erro,
+            CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
+        }
+    }
+
+    private sealed class FakeProcessamentoPagamentoQueue
+        : IProcessamentoPagamentoQueue
+    {
+        public ValueTask EnfileirarAsync(
+            ProcessarPagamentoCommand command,
+            CancellationToken cancellationToken)
+        {
+            return ValueTask.CompletedTask;
+        }
+
+        public async IAsyncEnumerable<ProcessarPagamentoCommand> LerAsync(
+            [System.Runtime.CompilerServices.EnumeratorCancellation]
+            CancellationToken cancellationToken)
+        {
+            yield break;
+        }
     }
 }
