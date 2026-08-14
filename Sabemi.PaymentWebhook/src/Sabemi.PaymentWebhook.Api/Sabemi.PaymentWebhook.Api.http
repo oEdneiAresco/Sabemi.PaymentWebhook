@@ -71,10 +71,10 @@ Content-Type: application/json
 X-Api-Key: sabemi-webhook-2026
 
 {
-  "id_transacao": "TRX-IDEMPOTENCIA-001",
-  "id_contrato": "CTR-003",
-  "valor": 500.00,
-  "data_pagamento": "2026-08-14T11:40:00",
+  "id_transacao": "TRX-CONTRATO-001",
+  "id_contrato": "CTR-TESTE-001",
+  "valor": 750.00,
+  "data_pagamento": "2026-08-14T12:00:00",
   "status": "Sucesso"
 }
 
