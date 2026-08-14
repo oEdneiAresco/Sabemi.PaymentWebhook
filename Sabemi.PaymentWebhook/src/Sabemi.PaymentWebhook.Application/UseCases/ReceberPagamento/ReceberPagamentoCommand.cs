@@ -7,5 +7,5 @@ public sealed record ReceberPagamentoCommand(
     string IdTransacao,
     string IdContrato,
     decimal Valor,
-    DateTime DataPagamento,
+    DateTime? DataPagamento,
     string Status) : IRequest<Pagamento>;

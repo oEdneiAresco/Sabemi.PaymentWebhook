@@ -21,11 +21,14 @@ public sealed class ReceberPagamentoHandler
                 nameof(command.Status));
         }
 
+        var dataPagamento = command.DataPagamento
+            ?? throw new ArgumentException("Data de pagamento é obrigatória.");
+
         var pagamento = Pagamento.Create(
             command.IdTransacao,
             command.IdContrato,
             command.Valor,
-            command.DataPagamento,
+            dataPagamento,
             status);
 
         return Task.FromResult(pagamento);

@@ -1,0 +1,34 @@
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using Sabemi.PaymentWebhook.Api.Contracts;
+using Sabemi.PaymentWebhook.Application.UseCases.ReceberPagamento;
+
+namespace Sabemi.PaymentWebhook.Api.Controllers;
+
+[ApiController]
+[Route("webhooks")]
+public sealed class WebhooksController : ControllerBase
+{
+    private readonly IMediator _mediator;
+
+    public WebhooksController(IMediator mediator)
+    {
+        _mediator = mediator;
+    }
+
+    [HttpPost("pagamento")]
+    public async Task<IActionResult> ReceberPagamento(
+        [FromBody] ReceberPagamentoRequest request)
+    {
+        var command = new ReceberPagamentoCommand(
+            request.IdTransacao,
+            request.IdContrato,
+            request.Valor,
+            request.DataPagamento,
+            request.Status);
+
+        await _mediator.Send(command);
+
+        return Accepted();
+    }
+}
