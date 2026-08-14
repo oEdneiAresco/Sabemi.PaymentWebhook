@@ -49,3 +49,32 @@ Content-Type: application/json
   "data_pagamento": "2026-08-14T10:30:00",
   "status": "Sucesso"
 }
+
+###
+
+POST {{Sabemi.PaymentWebhook.Api_HostAddress}}/webhooks/pagamento
+Content-Type: application/json
+X-Api-Key: sabemi-webhook-2026
+
+{
+    "id_transacao": "TRX-SEC-001",
+    "id_contrato": "CTR-001",
+    "valor": 100.00,
+    "data_pagamento": "2026-08-14T10:30:00",
+    "status": "Sucesso"
+}
+
+###
+
+POST {{Sabemi.PaymentWebhook.Api_HostAddress}}/webhooks/pagamento
+Content-Type: application/json
+X-Api-Key: sabemi-webhook-2026
+
+{
+  "id_transacao": "TRX-IDEMPOTENCIA-001",
+  "id_contrato": "CTR-003",
+  "valor": 500.00,
+  "data_pagamento": "2026-08-14T11:40:00",
+  "status": "Sucesso"
+}
+

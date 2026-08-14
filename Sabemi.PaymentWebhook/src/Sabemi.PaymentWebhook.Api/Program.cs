@@ -3,6 +3,7 @@ using Sabemi.PaymentWebhook.Api.Middleware;
 using Microsoft.EntityFrameworkCore;
 using Sabemi.PaymentWebhook.Infrastructure.Persistence;
 using Sabemi.PaymentWebhook.Infrastructure;
+using Sabemi.PaymentWebhook.Api.Background;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,8 @@ builder.Services.AddOpenApi();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(
     builder.Configuration.GetConnectionString("DefaultConnection")!);
+
+builder.Services.AddHostedService<ProcessamentoPagamentoWorker>();
 
 var app = builder.Build();
 

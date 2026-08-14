@@ -20,7 +20,10 @@ public static class DependencyInjection
 
         services.AddScoped<IPagamentoEventoRepository, PagamentoEventoRepository>();
 
+        services.AddScoped<IStatusContratoRepository, StatusContratoRepository>();
+
         services.AddSingleton<IProcessamentoPagamentoQueue, ProcessamentoPagamentoQueue>();
+
 
         return services;
     }

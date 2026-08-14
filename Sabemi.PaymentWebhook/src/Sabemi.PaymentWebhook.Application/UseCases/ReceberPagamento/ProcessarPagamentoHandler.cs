@@ -10,19 +10,26 @@ public sealed class ProcessarPagamentoHandler
 {
     private readonly IPagamentoRepository _pagamentoRepository;
     private readonly IPagamentoEventoRepository _pagamentoEventoRepository;
+    private readonly IStatusContratoRepository _statusContratoRepository;
 
     public ProcessarPagamentoHandler(
         IPagamentoRepository pagamentoRepository,
-        IPagamentoEventoRepository pagamentoEventoRepository)
+        IPagamentoEventoRepository pagamentoEventoRepository,
+        IStatusContratoRepository statusContratoRepository)
     {
         _pagamentoRepository = pagamentoRepository;
         _pagamentoEventoRepository = pagamentoEventoRepository;
+        _statusContratoRepository = statusContratoRepository;
     }
 
     public async Task Handle(
         ProcessarPagamentoCommand command,
         CancellationToken cancellationToken)
     {
+        await Task.Delay(
+            TimeSpan.FromSeconds(2),
+            cancellationToken); // Simular carga
+
         if (!Enum.TryParse<PagamentoStatus>(
                 command.Status,
                 true,
@@ -56,6 +63,12 @@ public sealed class ProcessarPagamentoHandler
                     pagamento,
                     cancellationToken);
             }
+
+            await _statusContratoRepository.AtualizarAsync(
+                command.IdContrato,
+                command.Status,
+                DateTime.UtcNow,
+                cancellationToken);
 
             await _pagamentoEventoRepository.MarcarComoProcessadoAsync(
                 command.EventoId,

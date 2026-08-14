@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Sabemi.PaymentWebhook.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using Sabemi.PaymentWebhook.Infrastructure.Persistence;
 namespace Sabemi.PaymentWebhook.Infrastructure.Migrations
 {
     [DbContext(typeof(PaymentWebhookDbContext))]
-    partial class PaymentWebhookDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260814113008_AddUniqueIndexPagamentoEvento")]
+    partial class AddUniqueIndexPagamentoEvento
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

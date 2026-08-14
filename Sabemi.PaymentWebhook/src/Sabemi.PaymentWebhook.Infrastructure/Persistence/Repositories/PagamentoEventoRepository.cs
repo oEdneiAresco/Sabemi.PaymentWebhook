@@ -1,4 +1,6 @@
-﻿using Sabemi.PaymentWebhook.Application.Interfaces;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using Sabemi.PaymentWebhook.Application.Interfaces;
 using Sabemi.PaymentWebhook.Infrastructure.Persistence;
 using Sabemi.PaymentWebhook.Infrastructure.Persistence.Entities;
 
@@ -13,7 +15,7 @@ public class PagamentoEventoRepository : IPagamentoEventoRepository
         _context = context;
     }
 
-    public async Task<Guid> AdicionarAsync(
+    public async Task<(Guid Id, bool Novo)> AdicionarAsync(
         string idTransacao,
         string payload,
         DateTime recebidoEm,
@@ -35,9 +37,27 @@ public class PagamentoEventoRepository : IPagamentoEventoRepository
             entity,
             cancellationToken);
 
-        await _context.SaveChangesAsync(cancellationToken);
+        try
+        {
+            await _context.SaveChangesAsync(cancellationToken);
 
-        return entity.Id;
+            return (entity.Id, true);
+        }
+        catch (DbUpdateException ex)
+            when (ex.InnerException is SqlException sqlException &&
+                  (sqlException.Number == 2601 ||
+                   sqlException.Number == 2627))
+        {
+            _context.Entry(entity).State = EntityState.Detached;
+
+            var eventoExistente =
+                await _context.PagamentoEventos
+                    .SingleAsync(
+                        x => x.IdTransacao == idTransacao,
+                        cancellationToken);
+
+            return (eventoExistente.Id, false);
+        }
     }
 
     public async Task MarcarComoProcessadoAsync(

@@ -2,7 +2,7 @@
 
 public interface IPagamentoEventoRepository
 {
-    Task<Guid> AdicionarAsync(
+    Task<(Guid Id, bool Novo)> AdicionarAsync(
         string idTransacao,
         string payload,
         DateTime recebidoEm,

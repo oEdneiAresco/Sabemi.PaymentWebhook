@@ -37,7 +37,7 @@ public sealed class ReceberPagamentoHandler
             ?? throw new ArgumentException(
                 "Data de pagamento é obrigatória.");
 
-        var eventoId =
+        var resultado =
             await _pagamentoEventoRepository.AdicionarAsync(
                 command.IdTransacao,
                 command.Payload,
@@ -46,8 +46,18 @@ public sealed class ReceberPagamentoHandler
                 null,
                 cancellationToken);
 
+        if (!resultado.Novo)
+        {
+            return Pagamento.Create(
+                command.IdTransacao,
+                command.IdContrato,
+                command.Valor,
+                dataPagamento,
+                status);
+        }
+
         var processamentoCommand = new ProcessarPagamentoCommand(
-            eventoId,
+            resultado.Id,
             command.IdTransacao,
             command.IdContrato,
             command.Valor,
