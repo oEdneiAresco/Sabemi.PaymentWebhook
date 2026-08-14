@@ -1,13 +1,22 @@
 ﻿using MediatR;
 using Sabemi.PaymentWebhook.Domain.Entities;
 using Sabemi.PaymentWebhook.Domain.Enums;
+using Sabemi.PaymentWebhook.Application.Interfaces;
 
 namespace Sabemi.PaymentWebhook.Application.UseCases.ReceberPagamento;
 
 public sealed class ReceberPagamentoHandler
     : IRequestHandler<ReceberPagamentoCommand, Pagamento>
 {
-    public Task<Pagamento> Handle(
+    private readonly IPagamentoRepository _pagamentoRepository;
+
+    public ReceberPagamentoHandler(
+        IPagamentoRepository pagamentoRepository)
+    {
+        _pagamentoRepository = pagamentoRepository;
+    }
+
+    public async Task<Pagamento> Handle(
         ReceberPagamentoCommand command,
         CancellationToken cancellationToken)
     {
@@ -24,6 +33,16 @@ public sealed class ReceberPagamentoHandler
         var dataPagamento = command.DataPagamento
             ?? throw new ArgumentException("Data de pagamento é obrigatória.");
 
+        var pagamentoExistente =
+            await _pagamentoRepository.ObterPorIdTransacaoAsync(
+                command.IdTransacao,
+                cancellationToken);
+
+        if (pagamentoExistente is not null)
+        {
+            return pagamentoExistente;
+        }
+
         var pagamento = Pagamento.Create(
             command.IdTransacao,
             command.IdContrato,
@@ -31,6 +50,11 @@ public sealed class ReceberPagamentoHandler
             dataPagamento,
             status);
 
-        return Task.FromResult(pagamento);
+        await _pagamentoRepository.AdicionarAsync(
+            pagamento,
+            cancellationToken);
+
+        return pagamento;
     }
+
 }
