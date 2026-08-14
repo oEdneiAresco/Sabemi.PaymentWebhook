@@ -11,4 +11,9 @@ public interface IPagamentoRepository
     Task<Pagamento?> ObterPorIdTransacaoAsync(
         string idTransacao,
         CancellationToken cancellationToken);
+
+    Task<IReadOnlyList<Pagamento>> ListarAsync(
+        string? status,
+        string? idContrato,
+        CancellationToken cancellationToken);
 }

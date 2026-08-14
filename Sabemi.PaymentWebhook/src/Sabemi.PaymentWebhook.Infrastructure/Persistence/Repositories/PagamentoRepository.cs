@@ -33,6 +33,41 @@ public class PagamentoRepository : IPagamentoRepository
         await _context.SaveChangesAsync(cancellationToken);
     }
 
+    public async Task<IReadOnlyList<Pagamento>> ListarAsync(
+    string? status,
+    string? idContrato,
+    CancellationToken cancellationToken)
+    {
+        var query = _context.Pagamentos
+            .AsNoTracking()
+            .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(status))
+        {
+            query = query.Where(
+                x => x.Status == status);
+        }
+
+        if (!string.IsNullOrWhiteSpace(idContrato))
+        {
+            query = query.Where(
+                x => x.IdContrato == idContrato);
+        }
+
+        var entities = await query
+            .OrderByDescending(x => x.DataPagamento)
+            .ToListAsync(cancellationToken);
+
+        return entities
+            .Select(x => Pagamento.Create(
+                x.IdTransacao,
+                x.IdContrato,
+                x.Valor,
+                x.DataPagamento,
+                Enum.Parse<PagamentoStatus>(x.Status)))
+            .ToList();
+    }
+
     public async Task<Pagamento?> ObterPorIdTransacaoAsync(
         string idTransacao,
         CancellationToken cancellationToken)

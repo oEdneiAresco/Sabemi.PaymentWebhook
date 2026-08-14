@@ -1,16 +1,5 @@
 @Sabemi.PaymentWebhook.Api_HostAddress = http://localhost:5065
 
-POST {{Sabemi.PaymentWebhook.Api_HostAddress}}/webhooks/pagamento
-Content-Type: application/json
-
-{
-  "id_transacao": "TRX-001",
-  "id_contrato": "CTR-001",
-  "valor": 150.75,
-  "data_pagamento": "2026-08-14T10:30:00",
-  "status": "Sucesso"
-}
-
 ###
 
 POST {{Sabemi.PaymentWebhook.Api_HostAddress}}/webhooks/pagamento
@@ -78,3 +67,23 @@ X-Api-Key: sabemi-webhook-2026
   "status": "Sucesso"
 }
 
+### ###
+### GET
+
+GET https://localhost:7197/pagamentos HTTP/1.1
+X-Api-Key: sabemi-webhook-2026
+
+###
+
+GET https://localhost:7197/pagamentos?status=Sucesso
+X-Api-Key: sabemi-webhook-2026
+
+###
+
+GET https://localhost:7197/pagamentos?idContrato=CTR-TESTE-001
+X-Api-Key: sabemi-webhook-2026
+
+###
+
+GET https://localhost:7197/pagamentos?status=Sucesso&idContrato=CTR-TESTE-001
+X-Api-Key: sabemi-webhook-2026
