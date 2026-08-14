@@ -1,7 +1,13 @@
 using Sabemi.PaymentWebhook.Application;
 using Sabemi.PaymentWebhook.Api.Middleware;
+using Microsoft.EntityFrameworkCore;
+using Sabemi.PaymentWebhook.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<PaymentWebhookDbContext>(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add services to the container.
 

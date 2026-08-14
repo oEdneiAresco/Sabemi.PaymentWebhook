@@ -25,6 +25,10 @@ public class PaymentWebhookDbContext : DbContext
             .HasIndex(x => x.IdTransacao)
             .IsUnique();
 
+        modelBuilder.Entity<PagamentoEntity>()
+            .Property(x => x.Valor)
+            .HasPrecision(18, 2);
+
         modelBuilder.Entity<StatusContratoEntity>()
             .HasIndex(x => x.IdContrato)
             .IsUnique();
